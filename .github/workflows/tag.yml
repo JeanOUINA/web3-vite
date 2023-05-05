@@ -43,6 +43,7 @@ jobs:
         if: steps.create_tag.outputs.successful
         run: |
           npm ci
+          node fix_vitejs
           npm run build
           npm publish
         env:
