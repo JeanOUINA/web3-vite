@@ -52,8 +52,6 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # otherwise git describe --tags will not work
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -75,17 +73,25 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # otherwise git describe --tags will not work
       - uses: actions/setup-node@v3
         with:
           node-version: 18
           registry-url: 'https://npm.pkg.github.com'
+      - name: Setup .yarnrc.yml
+        run: |
+          yarn config set npmScopes.jeanouina.npmPublishRegistry "https://npm.pkg.github.com"
+          yarn config set npmPublishRegistry "https://npm.pkg.github.com"
+          yarn config set npmScopes.jeanouina.npmAlwaysAuth true
+          yarn config set npmAlwaysAuth true
+          yarn config set npmScopes.jeanouina.npmAuthToken $NPM_AUTH_TOKEN
+          yarn config set npmAuthToken $NPM_AUTH_TOKEN
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish
         run: |
           npm ci
-          node fix_vitejs
+          node fix_vitejs.js
           npm run build
-          npm publish
+          yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
