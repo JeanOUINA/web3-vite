@@ -1,6 +1,6 @@
 {
   "name": "web3-vite",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Request Vite data in an user-friendly way",
   "main": "dist/index.js",
   "scripts": {

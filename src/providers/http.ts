@@ -4,7 +4,7 @@ import { SubscriptionName } from "../client";
 import { ViteError } from "../errors";
 import { EventEmitter } from "../events";
 import { nextTick } from "../utils";
-import AbortController from "isomorphic-abort-controller"
+import AAbortController from "isomorphic-abort-controller"
 
 export const SubscriptionMethodMap = new Map<SubscriptionName, string>()
 SubscriptionMethodMap.set("snapshotBlock", "subscribe_newSnapshotBlockFilter")
@@ -42,15 +42,27 @@ export class HTTPProvider implements Provider {
             req.id = this.requestId++
             req.jsonrpc = "2.0"
         }
-        const controller = new AbortController()
-        setTimeout(() => {
-            controller.abort()
-        }, 10000)
+        let signal = null
+        if(+process.version.slice(1) < 18){
+            // node-fetch, not global.fetch. requires polyfill
+            const controller = new AAbortController()
+            setTimeout(() => {
+                controller.abort()
+            }, 10000)
+            signal = controller.signal
+        }else{
+            // native fetch, use native one
+            const controller = new AbortController()
+            setTimeout(() => {
+                controller.abort()
+            }, 10000)
+            signal = controller.signal
+        }
         const res = await fetch(this.url, {
             headers: this.headers,
             method: "POST",
             body: this.pack(req),
-            signal: controller.signal
+            signal: signal
         })
         if(!res.ok)throw new HTTPError(`Node unreachable: ${res.status} ${res.statusText}`)
 

@@ -1,8 +1,7 @@
 import { AccountBlock } from "./accountBlock";
 import { Client, ClientFlags } from "./client";
 import { nodes } from "./constants";
-import { Contract } from "./contract";
-import { Address, WalletMnemonics, WalletSeed } from "./wallet";
+import { WalletMnemonics } from "./wallet";
 
 const client = new Client(
     nodes.testnet.ViteLabs.http,
