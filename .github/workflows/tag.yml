@@ -48,9 +48,13 @@ jobs:
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          registry-url: 'https://npm.pkg.github.com'
       - name: Publish GitHub Package
         if: steps.create_tag.outputs.successful
         run: |
-          npm publish --registry=https://npm.pkg.github.com 
+          npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
