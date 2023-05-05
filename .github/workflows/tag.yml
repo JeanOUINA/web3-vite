@@ -48,3 +48,9 @@ jobs:
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish GitHub Package
+        if: steps.create_tag.outputs.successful
+        run: |
+          npm publish --registry=https://npm.pkg.github.com 
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
