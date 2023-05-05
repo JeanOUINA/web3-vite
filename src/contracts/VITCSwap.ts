@@ -34,6 +34,7 @@ export default class VITCSwap extends Contract {
                 // lol timeout
                 // v1 takes a shitton of time to get all the events
                 // split the requests
+                // somehow it's an optimization
                 const infos = await this.client.methods.ledger.getAccountInfoByAddress(this.address)
                 const blockCount = Number(infos.blockCount)
                 const tokens:string[] = []
