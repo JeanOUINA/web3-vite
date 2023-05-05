@@ -26,6 +26,19 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           package-path: ./package.json
+      - name: Generate Changelog
+        uses: jaywcjlove/create-tag-action@main
+        if: steps.create_tag.outputs.successful
+        with:
+          version: ${{steps.create_tag.outputs.version}}
+          release: true
+          body: |
+            ```bash
+            npm i web3-vite@${{steps.create_tag.outputs.versionNumber}}
+            ```
+
+            ${{ steps.changelog.outputs.compareurl }}
+            ${{ steps.changelog.outputs.changelog }}
       - name: Publish
         if: steps.create_tag.outputs.successful
         run: |
