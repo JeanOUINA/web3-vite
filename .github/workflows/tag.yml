@@ -11,17 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0 # otherwise git describe --tags will not work
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 18
-          registry-url: 'https://registry.npmjs.org'
       - run: echo "previous_tag=$(git describe --tags --abbrev=0 || echo '')" >> $GITHUB_ENV
-      - run: echo $previous_tag
       - name: Create Tag
         id: create_tag
         uses: jaywcjlove/create-tag-action@main
@@ -30,6 +24,14 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           package-path: ./package.json
       - name: Generate Changelog
+        id: changelog
+        uses: jaywcjlove/changelog-generator@main
+        if: steps.create_tag.outputs.successful
+        with:
+          head-ref: ${{steps.create_tag.outputs.version}}
+          filter-author: (jeanouina|imalfect|dependabot\[bot\])
+          filter: (^[\s]+?[R|r]elease)|(^[R|r]elease)
+      - name: Create Release
         uses: jaywcjlove/create-tag-action@main
         if: steps.create_tag.outputs.successful
         with:
@@ -42,8 +44,22 @@ jobs:
 
             ${{ steps.changelog.outputs.compareurl }}
             ${{ steps.changelog.outputs.changelog }}
+
+  npm-publish:
+    needs: tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # otherwise git describe --tags will not work
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
       - name: Publish
-        if: steps.create_tag.outputs.successful
+        if: job.tag.steps.create_tag.outputs.successful
         run: |
           npm ci
           node fix_vitejs
@@ -51,13 +67,27 @@ jobs:
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  github-publish:
+    needs: tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # otherwise git describe --tags will not work
       - uses: actions/setup-node@v2
         with:
           node-version: 18
           registry-url: 'https://npm.pkg.github.com'
-      - name: Publish GitHub Package
-        if: steps.create_tag.outputs.successful
+      - name: Publish
+        if: job.tag.steps.create_tag.outputs.successful
         run: |
+          npm ci
+          node fix_vitejs
+          npm run build
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
