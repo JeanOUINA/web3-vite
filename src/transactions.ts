@@ -23,7 +23,7 @@ export async function sendTX(account:SigningAccount, accountBlock:AccountBlock):
                     return await accountBlock.getDifficulty()
                 }catch(err){
                     error = err
-                    if(err?.error?.code === -35005){
+                    if(err?.code === -35005){
                         if(i !== 2)await wait(1500)
                         i++
                     }else{
