@@ -24,6 +24,7 @@ jobs:
         uses: jaywcjlove/create-tag-action@main
         if: env.previous_tag
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           package-path: ./package.json
       - name: Publish
         if: steps.create_tag.outputs.successful
