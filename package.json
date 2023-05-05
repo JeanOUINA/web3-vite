@@ -1,6 +1,6 @@
 {
   "name": "web3-vite",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "Request Vite data in an user-friendly way",
   "main": "dist/index.js",
   "scripts": {
@@ -38,6 +38,7 @@
     "bignumber.js": "^9.0.2",
     "bip39": "^3.0.4",
     "blakejs": "^1.2.1",
+    "buffer": "^6.0.3",
     "isomorphic-abort-controller": "^2.0.0",
     "isomorphic-fetch": "^3.0.0",
     "isomorphic-ws": "^5.0.0",

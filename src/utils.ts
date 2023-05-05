@@ -2,7 +2,13 @@ import BigNumber from "bignumber.js"
 import blake, { blake2b } from "blakejs"
 import { getAddressFromOriginalAddress, getOriginalAddressFromAddress } from "./wallet"
 
-export let _Buffer:typeof Buffer = Buffer
+export let _Buffer:typeof Buffer
+try{
+    _Buffer = Buffer
+}catch(err){
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    _Buffer = require("buffer").Buffer
+}
 export function setBufferImplementation(__Buffer: typeof Buffer){
     _Buffer = __Buffer
 }
