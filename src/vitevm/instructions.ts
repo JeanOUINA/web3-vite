@@ -54,7 +54,7 @@ instructions.set("SDIV", ({ stack }) => {
     }
 })
 instructions.set("MOD", ({ stack }) => {
-    let [a, b] = stack.popN(2)
+    const [a, b] = stack.popN(2)
     if(b === 0n){
         stack.push(0n)
     }else{
@@ -81,7 +81,7 @@ instructions.set("SMOD", ({ stack }) => {
     }
 })
 instructions.set("ADDMOD", ({ stack }) => {
-    let [a, b, c] = stack.popN(3)
+    const [a, b, c] = stack.popN(3)
     if(c === 0n){
         stack.push(0n)
     }else{
@@ -89,7 +89,7 @@ instructions.set("ADDMOD", ({ stack }) => {
     }
 })
 instructions.set("MULMOD", ({ stack }) => {
-    let [a, b, c] = stack.popN(3)
+    const [a, b, c] = stack.popN(3)
     if(c === 0n){
         stack.push(0n)
     }else{
@@ -115,6 +115,7 @@ instructions.set("EXP", ({ stack }) => {
     }
 })
 instructions.set("SIGNEXTEND", ({ stack }) => {
+    // eslint-disable-next-line prefer-const
     let [k, val] = stack.popN(2)
     if(k < 31n){
         const signBit = k * 8n + 7n

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import blake from "blakejs"
 import { AddressType, copyBigIntToBuffer, isValidAddress, isValidTokenId, _Buffer as Buffer } from "./utils"
 
@@ -50,7 +51,7 @@ for(let i = 1; i <= 32; i++){
     const MAX_UINT = 2n**(BigInt(i)*8n)-1n
     encoders.set(`uint${i*8+"" as numberTypes}`, new class uintEncoder implements ABIEncoder<string> {
         encode(raw:string):Buffer{
-            let number = BigInt(raw)
+            const number = BigInt(raw)
             if(number > MAX_UINT || number < MAX_UINT)throw new Error(`Number out of range: [-${MAX_UINT};+${MAX_UINT}]`)
 
             const buffer = Buffer.alloc(32)

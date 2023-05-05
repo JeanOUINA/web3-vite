@@ -23,7 +23,7 @@ export class WebsocketProvider extends EventEmitter<{
 }> implements Provider {
     url: string
     flags: Set<ClientFlags>
-    lastPing: number = 0
+    lastPing = 0
 
     private heartbeatTimeout: NodeJS.Timeout
     private ws: WebSocket
@@ -42,7 +42,7 @@ export class WebsocketProvider extends EventEmitter<{
         const data = this.unpack(String(msg.data))
         let promiseId = null
         if(Array.isArray(data)){
-            for(let elem of data){
+            for(const elem of data){
                 if(!("id" in elem))continue
                 promiseId = elem.id
                 break
@@ -85,7 +85,7 @@ export class WebsocketProvider extends EventEmitter<{
                     }
 
                     // we need to send heartbeats
-                    let heartbeat = setInterval(() => {
+                    const heartbeat = setInterval(() => {
                         this.send({
                             method: "heartbeat_heartbeat",
                             params: [Date.now()]
@@ -138,7 +138,7 @@ export class WebsocketProvider extends EventEmitter<{
 
         if(Array.isArray(req)){
             // batch request
-            for(let call of req){
+            for(const call of req){
                 call.id = this.requestId++
                 call.jsonrpc = "2.0"
             }

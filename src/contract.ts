@@ -32,7 +32,7 @@ export class Contract {
 
         const data = vitejsAbi.encodeFunctionCall(abi, inputs)
         if(this.offchain){
-            let result = await this.client.methods.contract.callOffChainMethod(
+            const result = await this.client.methods.contract.callOffChainMethod(
                 this.address,
                 this.offchain,
                 data,
@@ -162,7 +162,7 @@ export class Event {
         return events
     }
 
-    async fetchLogs<DecodedData = any>(startHeight: number = 0, endHeight: number = 0, topics: string[][] = []){
+    async fetchLogs<DecodedData = any>(startHeight = 0, endHeight = 0, topics: string[][] = []){
         const signature = vitejsAbi.encodeLogSignature(this.abi)
         const logs = await this.contract.client.methods.ledger.getVmLogsByFilter({
             [this.contract.address]: {
@@ -303,6 +303,7 @@ export class Method {
             const start = Date.now()
             // 5 minutes. way more than enough
             const timeout = start + 300*1000
+            // eslint-disable-next-line no-constant-condition
             while(true){
                 if(start >= timeout)throw new Error(`Transaction was not received by the smart contract. Make sure it has enough quota.`)
                 await wait(1000)

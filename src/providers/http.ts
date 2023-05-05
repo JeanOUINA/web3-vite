@@ -34,7 +34,7 @@ export class HTTPProvider implements Provider {
     async send(req:any){
         if(Array.isArray(req)){
             // batch request
-            for(let call of req){
+            for(const call of req){
                 call.id = this.requestId++
                 call.jsonrpc = "2.0"
             }

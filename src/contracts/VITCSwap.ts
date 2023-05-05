@@ -40,7 +40,7 @@ export default class VITCSwap extends Contract {
                 const tokens:string[] = []
                 const promises = []
                 for(let i = 0; i * 20000 < blockCount; i++){
-                    let e = i
+                    const e = i
                     promises.push(
                         new Promise(r=>setTimeout(r,e))
                         .then(() => this.events.NewPair.fetchLogs(e*20000 + 1, (e*20000 + 20001)))

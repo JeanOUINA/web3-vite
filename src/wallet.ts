@@ -32,7 +32,7 @@ export class WalletSeed {
     deriveAddress(index:number){
         const path = `m/44'/666666'/${index}'`
         const { key } = hd.derivePath(path, this.seed.toString("hex"))
-        const { privateKey, publicKey } = hd.getPublicKey(key)
+        const { privateKey } = hd.getPublicKey(key)
 
         return new Address(Buffer.from(privateKey).toString("hex"))
     }

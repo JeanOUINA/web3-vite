@@ -78,7 +78,7 @@ export class Client extends EventEmitter<{
         this.methods = new MethodManager(this)
     }
 
-    private nextTickProcessing: boolean = false
+    private nextTickProcessing = false
     private requests: {
         method: string,
         params: string[],

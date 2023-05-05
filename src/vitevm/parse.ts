@@ -23,6 +23,7 @@ export function parseOpcodes(code: Buffer|string):Instruction[]{
     const realCode = code as Buffer
     const instructions:Instruction[] = []
     let i = 0
+    // eslint-disable-next-line no-constant-condition
     while(true){
         if(i >= realCode.length)break
         const code = realCode[i]
@@ -31,7 +32,7 @@ export function parseOpcodes(code: Buffer|string):Instruction[]{
             i++
             continue
         }//throw new Error(`Unknown opcode: ${i}:${code}`)
-        let instruction:Instruction = {
+        const instruction:Instruction = {
             isPush: false,
             name: op.name,
             code: op.code,
@@ -121,6 +122,7 @@ export function parseFunctions(instructions: Instruction[]){
 
     const functions = []
     let i = index
+    // eslint-disable-next-line no-constant-condition
     while(true){
         const dup1 = instructions[i]
         if(dup1?.name !== "DUP1")break
