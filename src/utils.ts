@@ -15,15 +15,13 @@ export function setBufferImplementation(__Buffer: typeof Buffer){
 export type BufferLike = string | Buffer
 export function resolveBuffer(input: BufferLike): Buffer {
     if (typeof input === "string") {
-        if (input.startsWith("0x")){
+        if(input.startsWith("0x")){
             input = input.replace("0x", "")
+        }
+        if(/^([\da-f]{2})*$/i.test(input)){
             input = _Buffer.from(input, "hex")
         }else{
-            try{
-                input = _Buffer.from(input as string, "hex")
-            }catch{
-                input = _Buffer.from(input as string, "base64")
-            }
+            input = _Buffer.from(input, "base64")
         }
     }
     if(!_Buffer.isBuffer(input)){
