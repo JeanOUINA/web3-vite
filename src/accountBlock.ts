@@ -165,6 +165,13 @@ export class AccountBlock {
         this.signature = resolveBuffer(signature)
         return this
     }
+    triggeredSendBlockList:AccountBlock[] = []
+    addTriggeredSendBlock(block:AccountBlock){
+        if(!block.isSend)throw new Error("Can only add send blocks to triggered send block list")
+        this.triggeredSendBlockList.push(block)
+        return this
+    }
+    vmlogHash?: Buffer
 
     async getPreviousHash(){
         const block = await this.client.methods.ledger.getLatestAccountBlock(this.producer)
@@ -318,8 +325,7 @@ export class AccountBlock {
         copyBigIntToBuffer(BigInt(this.fee.toFixed()), feeBuffer)
         buffers.push(feeBuffer)
 
-        // TODO: Allow arbitrary account block that can't be sent on network
-        // buffers.push(Buffer.from(this.vmlogHash, "hex"))
+        if(this.vmlogHash)buffers.push(this.vmlogHash)
 
         if(this.nonce?.length){
             buffers.push(Buffer.from(this.nonce))
@@ -327,11 +333,9 @@ export class AccountBlock {
             buffers.push(Buffer.alloc(8))
         }
         
-        /*
         for(const sendBlock of this.triggeredSendBlockList){
-            buffers.push(Buffer.from(sendBlock.hash, "hex"))
+            buffers.push(sendBlock.hash)
         }
-        */
 
         return Buffer.from(
             blake2b(Buffer.concat(buffers), null, 32)
