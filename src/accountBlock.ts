@@ -165,10 +165,10 @@ export class AccountBlock {
         this.signature = resolveBuffer(signature)
         return this
     }
-    triggeredSendBlockList:AccountBlock[] = []
-    addTriggeredSendBlock(block:AccountBlock){
-        if(!block.isSend)throw new Error("Can only add send blocks to triggered send block list")
-        this.triggeredSendBlockList.push(block)
+    sendBlockList:AccountBlock[] = []
+    addSendBlock(block:AccountBlock){
+        if(!block.isSend)throw new Error("Can only add send blocks to send block list")
+        this.sendBlockList.push(block)
         return this
     }
     vmlogHash?: Buffer
@@ -292,7 +292,7 @@ export class AccountBlock {
         return block
     }
 
-    get hash(){
+    computeHash(extraData = Buffer.alloc(0)){
         const buffers:Buffer[] = []
 
         buffers.push(Buffer.from([this.blockType]))
@@ -319,7 +319,7 @@ export class AccountBlock {
             throw new Error("Invalid block type")
         }
 
-        if(this.data.length)buffers.push(Buffer.from(blake2b(this.data, null, 32)))
+        if(this.data.length > 0)buffers.push(Buffer.from(blake2b(this.data, null, 32)))
 
         const feeBuffer = Buffer.alloc(32)
         copyBigIntToBuffer(BigInt(this.fee.toFixed()), feeBuffer)
@@ -333,12 +333,24 @@ export class AccountBlock {
             buffers.push(Buffer.alloc(8))
         }
         
-        for(const sendBlock of this.triggeredSendBlockList){
-            buffers.push(sendBlock.hash)
+        for(let i = 0; i < this.sendBlockList.length; i++){
+            const sendBlock = this.sendBlockList[i]
+            const extraDataBuffer = Buffer.concat([
+                this.previousHash,
+                heightBuffer,
+                Buffer.from([i])
+            ])
+            buffers.push(sendBlock.computeHash(extraDataBuffer))
         }
+
+        buffers.push(extraData)
 
         return Buffer.from(
             blake2b(Buffer.concat(buffers), null, 32)
         )
+    }
+
+    get hash(){
+        return this.computeHash()
     }
 }
