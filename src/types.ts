@@ -5,7 +5,10 @@ export enum BlockType {
     Receive = 0x04,
     ReceiveError = 0x05,
     SendRefund = 0x06,
-    GenesisReceive = 0x07
+    GenesisReceive = 0x07,
+    SendSyncCall = 0x08,
+    SendCallback = 0x09,
+    SendFailureCallback = 0x0a,
 }
 
 export interface AccountBlockV2 {
