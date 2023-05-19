@@ -284,6 +284,9 @@ export class AccountBlock {
             block.fee = this.fee.toFixed()
             block.data = this.data.toString("base64")
         }
+        if(this.sendBlockList?.length){
+            block.triggeredSendBlockList = this.sendBlockList.map(block => block.accountBlock) as any
+        }
 
         if(this.difficulty !== undefined){
             block.difficulty = this.difficulty.toFixed()
@@ -297,7 +300,7 @@ export class AccountBlock {
 
         buffers.push(Buffer.from([this.blockType]))
 
-        buffers.push(Buffer.from(this.previousHash))
+        buffers.push(Buffer.from(this.previousHash || Buffer.alloc(32)))
 
         const heightBuffer = Buffer.alloc(8)
         copyBigIntToBuffer(BigInt(this.height.toFixed()), heightBuffer)
