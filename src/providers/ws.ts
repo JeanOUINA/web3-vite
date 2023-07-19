@@ -74,34 +74,33 @@ export class WebsocketProvider extends EventEmitter<{
             }
             if(this.flags.has(ClientFlags.Heartbeat)){
                 this.send({
-                    method: "heartbeat_enable",
+                    method: "heartbeat_start",
                     params: []
                 })
                 .then(result => {
                     if("error" in result){
-                        //console.warn(`[web3-vite]: The current server appears to not support heartbeat. Ignoring the "Heartbeat" flag.`)
+                        console.warn(`[web3-vite]: The current server appears to not support heartbeat. Ignoring the "Heartbeat" flag.`)
                         //console.warn(new ViteError(result))
                         return
                     }
 
                     // we need to send heartbeats
                     const heartbeat = setInterval(() => {
+                        this.heartbeatTimeout = setTimeout(() => {
+                            this.ws.close(1006, "Heartbeat timeout")
+                        }, 15*1000)
                         this.send({
-                            method: "heartbeat_heartbeat",
+                            method: "heartbeat_ping",
                             params: [Date.now()]
-                        })
-                        if(!this.heartbeatTimeout){
-                            this.heartbeatTimeout = setTimeout(() => {
-                                this.ws.close()
-                            }, 15000)
-                        }
-                    })
+                        }).then(() => {
+                            clearTimeout(this.heartbeatTimeout)
+                        }).catch(() => {})
+                    }, 30*1000)
                     this.once("close", () => {
                         clearInterval(heartbeat)
                         clearTimeout(this.heartbeatTimeout)
                         this.heartbeatTimeout = null
                     })
-                    
                 }).catch(() => {})
             }
         }
