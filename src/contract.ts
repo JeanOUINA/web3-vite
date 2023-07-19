@@ -319,7 +319,7 @@ export class Method {
                 if(
                     this.abi.type == "function" &&
                     this.contract.client.flags.has(ClientFlags.ContractResults) &&
-                    this.abi.outputs.length > 0
+                    this.abi.outputs?.length
                 ){
                     try{
                         const bytes = await this.contract.client.methods.ledger.getContractResponse(receiveTx.hash)
